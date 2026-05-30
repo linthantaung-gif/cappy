@@ -1,0 +1,1478 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Secret Just For You 🤫</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --cream: #fdf6ec;
+        --warm: #f7ede0;
+        --capy-brown: #8b5e3c;
+        --capy-light: #c4956a;
+        --capy-dark: #5c3d1e;
+        --rose: #d4837a;
+        --rose-light: #f2c4be;
+        --forest: #6b8f5e;
+        --gold: #c9a84c;
+        --text: #3a2e28;
+        --muted: #8a7060;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--cream);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* ===== SCREENS ===== */
+      .screen {
+        display: none;
+        min-height: 100vh;
+      }
+      .screen.active {
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ===== SINGLE CAPYBARA GRAPHIC ===== */
+      .capy-graphic {
+        display: inline-block;
+        background-image: url("Tzr0jByoXefwlW5HULSV1g.png");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+
+      /* ===== LOGIN SCREEN ===== */
+      #login-screen {
+        background: var(--cream);
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .bg-capy-art {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .bg-capy-art::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 200px;
+        background: linear-gradient(to top, #d4e8c2 0%, transparent 100%);
+        opacity: 0.4;
+      }
+
+      .floating-capy {
+        position: absolute;
+        opacity: 0.15;
+        animation: floatDrift 8s ease-in-out infinite;
+      }
+
+      @keyframes floatDrift {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(-5deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(5deg);
+        }
+      }
+
+      .login-card {
+        background: white;
+        border-radius: 24px;
+        padding: 3rem 3.5rem;
+        max-width: 440px;
+        width: 90%;
+        box-shadow:
+          0 20px 60px rgba(139, 94, 60, 0.12),
+          0 4px 20px rgba(139, 94, 60, 0.08);
+        position: relative;
+        z-index: 10;
+        animation: cardIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(40px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .login-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.8rem;
+        text-align: center;
+        color: var(--capy-dark);
+        margin-bottom: 0.5rem;
+      }
+
+      .login-subtitle {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+      }
+
+      .form-group {
+        margin-bottom: 1.2rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--capy-brown);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.85rem 1.1rem;
+        border: 1.5px solid #e8ddd4;
+        border-radius: 12px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.95rem;
+        color: var(--text);
+        background: var(--cream);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        outline: none;
+      }
+
+      .form-group input:focus {
+        border-color: var(--capy-light);
+        box-shadow: 0 0 0 3px rgba(196, 149, 106, 0.15);
+      }
+
+      .unlock-btn {
+        width: 100%;
+        padding: 1rem;
+        background: var(--capy-brown);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+      }
+
+      .unlock-btn:hover {
+        background: var(--capy-dark);
+        transform: translateY(-1px);
+      }
+
+      .error-msg {
+        color: #c0392b;
+        font-size: 0.82rem;
+        text-align: center;
+        margin-top: 0.8rem;
+        min-height: 1.2em;
+      }
+
+      /* ===== MAIN SITE ===== */
+      #main-screen {
+        background: var(--cream);
+        flex-direction: column;
+        position: relative;
+      }
+
+      /* HERO */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, #fff8f0 0%, var(--cream) 100%);
+      }
+
+      .hero-capybara {
+        width: 180px;
+        height: 180px;
+        margin: 0 auto 2rem;
+        animation: bobble 3s ease-in-out infinite;
+      }
+
+      @keyframes bobble {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-2deg);
+        }
+        50% {
+          transform: translateY(-12px) rotate(2deg);
+        }
+      }
+
+      .hero-greeting {
+        font-size: 0.9rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--capy-light);
+        font-weight: 500;
+        margin-bottom: 0.8rem;
+      }
+
+      .hero-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2.8rem, 8vw, 5rem);
+        line-height: 1.1;
+        color: var(--capy-dark);
+        margin-bottom: 1rem;
+      }
+
+      .hero-title em {
+        color: var(--rose);
+        font-style: italic;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 480px;
+        line-height: 1.7;
+        margin-bottom: 2.5rem;
+      }
+
+      .scroll-hint {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--capy-light);
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        animation: fadeUpDown 2s ease-in-out infinite;
+      }
+
+      .scroll-arrow {
+        width: 1.5px;
+        height: 40px;
+        background: linear-gradient(to bottom, var(--capy-light), transparent);
+        margin: 0 auto;
+      }
+
+      @keyframes fadeUpDown {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: translateY(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateY(6px);
+        }
+      }
+
+      /* SECTION WRAPPER */
+      .section {
+        padding: 5rem 1.5rem;
+        max-width: 760px;
+        margin: 0 auto;
+        width: 100%;
+        text-align: center;
+      }
+
+      .section-tag {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--capy-light);
+        font-weight: 500;
+        margin-bottom: 0.8rem;
+      }
+
+      .section-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2rem, 5vw, 2.8rem);
+        color: var(--capy-dark);
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+      }
+
+      /* JOKE SECTION */
+      .joke-box {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        border: 1px solid #f0e8e0;
+        box-shadow: 0 8px 30px rgba(139, 94, 60, 0.07);
+        margin-top: 2rem;
+        text-align: left;
+      }
+
+      .joke-text {
+        font-size: 1.05rem;
+        color: var(--text);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+      }
+
+      .joke-highlight {
+        font-family: "Playfair Display", serif;
+        font-size: 1.3rem;
+        color: var(--rose);
+        font-style: italic;
+        display: block;
+        margin-top: 1rem;
+        text-align: center;
+      }
+
+      /* CAKE SECTION & DARK OVERLAY */
+      #dark-overlay {
+        position: fixed;
+        inset: 0;
+        background: #0a0807;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 50;
+        transition: opacity 2s ease-in-out;
+      }
+
+      .cake-section {
+        background: var(--warm);
+        padding: 6rem 1.5rem;
+        text-align: center;
+        border-radius: 40px;
+        margin: 2rem auto;
+        max-width: 800px;
+        box-shadow: inset 0 0 50px rgba(139, 94, 60, 0.05);
+        position: relative;
+        z-index: 51;
+      }
+
+      .cake-container {
+        margin: 7rem auto 2rem;
+        position: relative;
+        width: 320px;
+        height: 250px;
+        transition: filter 1s ease;
+      }
+
+      .cake-container.glow-effect {
+        filter: drop-shadow(0 0 60px rgba(201, 168, 76, 0.3));
+      }
+
+      /* Cake Plate */
+      .cake-plate {
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 380px;
+        height: 30px;
+        background: #e4d5c7;
+        border-radius: 50%;
+        z-index: 1;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Bottom Tier */
+      .cake-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 300px;
+        height: 130px;
+        background: #fff;
+        border-radius: 15px 15px 8px 8px;
+        border: 4px solid var(--capy-brown);
+        z-index: 2;
+        overflow: hidden;
+        box-shadow: inset -20px 0 30px rgba(0, 0, 0, 0.03);
+      }
+
+      /* Frosting Drip on Bottom Tier */
+      .cake-bottom::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        height: 60px;
+        background: var(--rose-light);
+        border-bottom: 4px solid var(--capy-brown);
+        border-radius: 0 0 50% 50%;
+      }
+
+      /* Top Tier */
+      .cake-top {
+        position: absolute;
+        bottom: 126px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 220px;
+        height: 110px;
+        background: var(--cream);
+        border-radius: 15px 15px 0 0;
+        border: 4px solid var(--capy-brown);
+        border-bottom: none;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        box-shadow: inset -15px 0 20px rgba(0, 0, 0, 0.03);
+      }
+
+      /* Frosting Drip on Top Tier */
+      .cake-top::before {
+        content: "";
+        position: absolute;
+        top: -15px;
+        left: -15px;
+        right: -15px;
+        height: 45px;
+        background: var(--gold);
+        border-bottom: 4px solid var(--capy-brown);
+        border-radius: 0 0 45% 45%;
+      }
+
+      .cake-number {
+        font-family: "Playfair Display", serif;
+        font-size: 4rem;
+        color: var(--rose);
+        font-weight: bold;
+        z-index: 4;
+        margin-top: 10px;
+        line-height: 1;
+        text-shadow: 2px 2px 0px var(--capy-brown);
+      }
+
+      .cake-name {
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+        color: var(--rose);
+        font-weight: bold;
+        font-style: italic;
+        text-shadow: 1px 1px 0px var(--capy-brown);
+        margin-top: -5px;
+        z-index: 4;
+      }
+
+      /* Candles */
+      .candle {
+        width: 14px;
+        height: 55px;
+        background: linear-gradient(to right, #fff, #f0e8e0);
+        border: 2px solid var(--capy-brown);
+        border-radius: 4px;
+        position: absolute;
+        bottom: 234px;
+        z-index: 10;
+      }
+      .candle-1 {
+        left: 90px;
+        transform: rotate(-5deg);
+      }
+      .candle-2 {
+        left: 153px;
+        height: 65px;
+        bottom: 234px;
+      }
+      .candle-3 {
+        right: 90px;
+        transform: rotate(5deg);
+      }
+
+      .wick {
+        width: 3px;
+        height: 10px;
+        background: #3a2e28;
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .flame {
+        width: 22px;
+        height: 38px;
+        background: #c9a84c;
+        border-radius: 50% 50% 20% 20%;
+        position: absolute;
+        top: -45px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow:
+          0 0 20px #c9a84c,
+          0 0 60px #d4837a,
+          0 0 100px #f0e8e0;
+        animation: flicker 0.15s infinite alternate;
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+        opacity: 0;
+      }
+
+      .flame.active {
+        opacity: 1;
+      }
+
+      .flame.blown-out {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.1) translateY(-20px);
+        animation: none;
+      }
+
+      @keyframes flicker {
+        0% {
+          transform: translateX(-50%) scale(1) rotate(-1deg);
+          opacity: 0.9;
+        }
+        100% {
+          transform: translateX(-50%) scale(1.05) rotate(1deg);
+          opacity: 1;
+        }
+      }
+
+      .mic-btn {
+        background: var(--capy-brown);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 1.2rem 2.5rem;
+        font-family: "DM Sans", sans-serif;
+        font-size: 1.1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          background 0.2s;
+        margin-top: 2rem;
+        position: relative;
+        z-index: 52;
+      }
+
+      .mic-btn:hover {
+        background: var(--capy-dark);
+        transform: translateY(-2px);
+      }
+
+      #blow-hint {
+        color: #fff;
+        font-weight: bold;
+        font-size: 1.3rem;
+        margin-top: 2rem;
+        display: none;
+        animation: pulseText 1.5s infinite;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        position: relative;
+        z-index: 52;
+      }
+
+      @keyframes pulseText {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* REVEAL MESSAGE */
+      .reveal-section {
+        background: var(--capy-dark);
+        color: white;
+        padding: 7rem 1.5rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .reveal-inner {
+        max-width: 620px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+
+      .reveal-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        color: var(--rose-light);
+        margin-bottom: 2rem;
+      }
+
+      .reveal-letter {
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: left;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .letter-line {
+        font-size: 1rem;
+        line-height: 1.9;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 0.5rem;
+      }
+
+      .letter-sign {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-size: 1.5rem;
+        color: var(--rose-light);
+        margin-top: 1.5rem;
+        display: block;
+      }
+
+      /* CONFETTI */
+      .confetti-piece {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        top: -20px;
+        opacity: 0;
+        z-index: 9999;
+        pointer-events: none;
+        animation: confettiFall linear forwards;
+      }
+
+      @keyframes confettiFall {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(105vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+
+      .site-footer {
+        background: var(--capy-dark);
+        text-align: center;
+        padding: 2rem;
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 0.8rem;
+      }
+
+      .fade-observe {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.7s ease,
+          transform 0.7s ease;
+      }
+
+      .fade-observe.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Make sure the cake resizes gracefully on small mobile screens */
+      @media (max-width: 400px) {
+        .cake-container {
+          transform: scale(0.85);
+          margin-top: 3rem;
+        }
+      }
+
+      /* ===== CAPYBARA PHOTO CARDS ===== */
+      .capy-photo-card {
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 6px 24px rgba(139, 94, 60, 0.1);
+        border: 1px solid #f0e4d0;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        cursor: pointer;
+        background: white;
+      }
+      .capy-photo-card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 16px 40px rgba(139, 94, 60, 0.18);
+      }
+      .capy-photo-img {
+        width: 100%;
+        aspect-ratio: 1;
+        overflow: hidden;
+        display: block;
+      }
+      .capy-photo-cap {
+        padding: 0.75rem 1rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+        font-style: italic;
+        text-align: center;
+        border-top: 1px solid rgba(139, 94, 60, 0.08);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login-screen" class="screen active">
+      <div class="bg-capy-art">
+        <div
+          class="floating-capy capy-graphic"
+          style="
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            width: 80px;
+            height: 80px;
+          "
+        ></div>
+        <div
+          class="floating-capy capy-graphic"
+          style="
+            top: 20%;
+            right: 8%;
+            animation-delay: 1.5s;
+            width: 70px;
+            height: 70px;
+          "
+        ></div>
+        <div
+          class="floating-capy capy-graphic"
+          style="
+            top: 60%;
+            left: 12%;
+            animation-delay: 3s;
+            width: 90px;
+            height: 90px;
+          "
+        ></div>
+        <div
+          class="floating-capy capy-graphic"
+          style="
+            bottom: 25%;
+            right: 5%;
+            animation-delay: 0.8s;
+            width: 75px;
+            height: 75px;
+          "
+        ></div>
+      </div>
+
+      <div class="login-card">
+        <div
+          class="login-icon capy-graphic"
+          style="
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            display: block;
+          "
+        ></div>
+
+        <h1 class="login-title">Psst, is that you?</h1>
+        <p class="login-subtitle">Let's make sure it's the birthday girl.</p>
+
+        <div class="form-group">
+          <label>What's your name?</label>
+          <input
+            type="text"
+            id="input-name"
+            placeholder="Type your name..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Your birthday (DD/MM/YYYY)</label>
+          <input
+            type="text"
+            id="input-birthday"
+            placeholder="e.g. 14/02/2007"
+            autocomplete="off"
+          />
+        </div>
+
+        <button class="unlock-btn" onclick="tryUnlock()">
+          Unlock your surprise ✨
+        </button>
+        <div class="error-msg" id="error-msg"></div>
+      </div>
+    </div>
+
+    <div id="main-screen" class="screen">
+      <div id="dark-overlay"></div>
+
+      <section class="hero">
+        <div class="hero-capybara">
+          <div class="capy-graphic" style="width: 180px; height: 180px"></div>
+        </div>
+
+        <p class="hero-greeting">Finally!</p>
+        <h1 class="hero-title">Happy <em>18th</em> Birthday,<br />Cappy!</h1>
+        <p class="hero-subtitle">
+          You made it. No more avoiding the traffic police. No more asking for
+          permission for everything. Welcome to being a full blown adult (even
+          if you're still a sleepy capybara at heart).
+        </p>
+        <div class="scroll-hint">
+          <span>Scroll to celebrate</span>
+          <div class="scroll-arrow"></div>
+        </div>
+      </section>
+
+      <section
+        class="section"
+        style="background: white; max-width: 100%; padding: 5rem 1.5rem"
+      >
+        <div style="max-width: 760px; margin: 0 auto; text-align: center">
+          <p class="section-tag fade-observe">Cappy's spirit animal gallery</p>
+          <h2 class="section-title fade-observe">A gallery just for you 🦛</h2>
+          <p
+            class="fade-observe"
+            style="
+              color: var(--muted);
+              font-size: 0.92rem;
+              margin-bottom: 2rem;
+              line-height: 1.6;
+            "
+          >
+            Because you love them so much, here's a collection of the most
+            Cappy-coded capybaras on the internet.
+          </p>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 1.2rem;
+            "
+          >
+            <div
+              class="capy-photo-card fade-observe"
+              style="transition-delay: 0s"
+            >
+              <div
+                class="capy-photo-img"
+                style="
+                  background-image: url(&quot;360_F_1564005566_0yNpmgudna76xXY2Kl8djR2azvRqFyb5.jpg&quot;);
+                  background-size: cover;
+                  background-position: center;
+                "
+              ></div>
+              <div class="capy-photo-cap">"how I imagine you"</div>
+            </div>
+
+            <div
+              class="capy-photo-card fade-observe"
+              style="transition-delay: 0.1s"
+            >
+              <div
+                class="capy-photo-img"
+                style="
+                  background-image: url(&quot;cappy in summer.jpg&quot;);
+                  background-size: cover;
+                  background-position: center;
+                "
+              ></div>
+              <div class="capy-photo-cap">"You in summer"</div>
+            </div>
+
+            <div
+              class="capy-photo-card fade-observe"
+              style="transition-delay: 0.2s"
+            >
+              <div
+                class="capy-photo-img"
+                style="
+                  background-image: url(&quot;crocodile-capybaras-.webp&quot;);
+                  background-size: cover;
+                  background-position: center;
+                "
+              ></div>
+              <div class="capy-photo-cap">"cappy is danger"</div>
+            </div>
+
+            <div
+              class="capy-photo-card fade-observe"
+              style="transition-delay: 0.3s"
+            >
+              <div
+                class="capy-photo-img"
+                style="
+                  background-image: url(&quot;You&me 2.png&quot;);
+                  background-size: cover;
+                  background-position: center;
+                "
+              ></div>
+              <div class="capy-photo-cap">"You and me"</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cake-section fade-observe" id="cake-section">
+        <p class="section-tag" id="cake-tag">Make a wish</p>
+        <h2 class="section-title" id="cake-title">
+          Happy 18th Birthday, Cappy!! 🎂
+        </h2>
+        <p
+          id="cake-desc"
+          style="
+            color: var(--muted);
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 52;
+          "
+        >
+          Since I can't be there to bake you a cake, I made you a big big
+          digital one. Make a wish and blow the candles!!
+        </p>
+
+        <div class="cake-container" id="cake-container">
+          <div class="cake-plate"></div>
+
+          <div class="cake-bottom"></div>
+
+          <div class="cake-top">
+            <span class="cake-number">18</span>
+            <span class="cake-name">cappy</span>
+          </div>
+
+          <div class="candle candle-1">
+            <div class="wick"></div>
+            <div class="flame"></div>
+          </div>
+          <div class="candle candle-2">
+            <div class="wick"></div>
+            <div class="flame"></div>
+          </div>
+          <div class="candle candle-3">
+            <div class="wick"></div>
+            <div class="flame"></div>
+          </div>
+        </div>
+
+        <button id="mic-btn" class="mic-btn" onclick="startMic()">
+          Light the candles & Enable Mic
+        </button>
+        <p id="blow-hint">
+          Shh... turning off the lights. Now make a wish and blow into your mic!
+        </p>
+      </section>
+
+      <section class="section">
+        <p class="section-tag fade-observe">A massive relief</p>
+        <h2 class="section-title fade-observe">
+          The "Underage" Era<br />is Officially Over
+        </h2>
+
+        <div class="joke-box fade-observe">
+          <p class="joke-text">
+            I will never forget how we joke about you being underage and FBI
+            knocking on my door in the middle of our conversation. Well, the FBI
+            can finally take me off their watchlist. I am officially cleared of
+            all charges and won't have to run away anymore. 😂
+          </p>
+          <p class="joke-text">
+            We’ve had our fair share of laughs about me being a grandpa but
+            seeing you turn 18 is also quite a change, grandma. You're entering
+            a whole new chapter of your life and I couldn't be more excited to
+            see where it takes you and to be a part of it in any way I can.
+          </p>
+          <span class="joke-highlight"
+            >No more underage jokes... just old age jokes from here on out!
+            🌻</span
+          >
+        </div>
+      </section>
+
+      <section class="reveal-section" id="reveal-section">
+        <div class="reveal-inner fade-observe">
+          <h2 class="reveal-title">To the birthday girl,</h2>
+
+          <div class="reveal-letter">
+            <p class="letter-line">My love Cappy. Welcome to 18.</p>
+            <p class="letter-line">
+              I can't believe we both have come a long way. Today is a big day
+              for you. You're starting your adult life and I'm very proud of
+              you. I've always admired you for your maturity, humor and
+              joyfulness. You always have this wonderful energy just like a
+              capybara lounging perfectly in a field of sunflowers.
+            </p>
+            <p class="letter-line">
+              I wish I could be right there next to you today to celebrate but
+              just know I'm thinking about you all day long and wishing you lots
+              and lots of joy. Have fun on your birthday and eat an extra slice
+              of cake for me. I can't wait for the day where I could be next to
+              you and put the cream on your nose and lick it after. I want to
+              give you so many hugs and kisses and all the presents in this
+              world. We will celebrate properly when I see you, I promise. I
+              have never met a more special person in my life and I am so
+              grateful to have you. You deserve all the happiness in the world,
+              Cappy. Always remember that.
+            </p>
+            <p class="letter-line">Happy Birthday, Cappy.</p>
+            <span class="letter-sign">With love always, Lin 🤍</span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        Made with love by Lin for Cappy · No capybaras were harmed in the making
+        of this website.
+      </footer>
+    </div>
+
+    <script>
+      // === LOGIN LOGIC ===
+      function normalize(s) {
+        return s.trim().toLowerCase().replace(/\s+/g, "");
+      }
+
+      // ============================================================
+      //  HAPPY BIRTHDAY SYNTHESIZER
+      // ============================================================
+      let musicCtx = null;
+      let musicPlaying = false;
+      let musicStopFn = null;
+
+      const HAPPY_BDAY_NOTES = [
+        ["G", 4, 0.75],
+        ["G", 4, 0.25],
+        ["A", 4, 1],
+        ["G", 4, 1],
+        ["C", 5, 1],
+        ["B", 4, 2],
+        ["G", 4, 0.75],
+        ["G", 4, 0.25],
+        ["A", 4, 1],
+        ["G", 4, 1],
+        ["D", 5, 1],
+        ["C", 5, 2],
+        ["G", 4, 0.75],
+        ["G", 4, 0.25],
+        ["G", 5, 1],
+        ["E", 5, 1],
+        ["C", 5, 1],
+        ["B", 4, 1],
+        ["A", 4, 2],
+        ["F", 5, 0.75],
+        ["F", 5, 0.25],
+        ["E", 5, 1],
+        ["C", 5, 1],
+        ["D", 5, 1],
+        ["C", 5, 3],
+      ];
+
+      const NOTE_FREQS = {
+        C: 261.63,
+        D: 293.66,
+        E: 329.63,
+        F: 349.23,
+        G: 392.0,
+        A: 440.0,
+        B: 493.88,
+      };
+
+      function getNoteFreq(note, octave) {
+        return NOTE_FREQS[note] * Math.pow(2, octave - 4);
+      }
+
+      function playHappyBirthday(ctx, loop, delaySeconds = 0) {
+        const BPM = 100;
+        const BEAT = 60 / BPM;
+        let t = ctx.currentTime + delaySeconds + 0.1;
+
+        const gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(0.18, ctx.currentTime);
+        gainNode.connect(ctx.destination);
+
+        const convolver = ctx.createConvolver();
+        const reverbBuf = ctx.createBuffer(
+          2,
+          ctx.sampleRate * 2,
+          ctx.sampleRate,
+        );
+        for (let ch = 0; ch < 2; ch++) {
+          const d = reverbBuf.getChannelData(ch);
+          for (let i = 0; i < d.length; i++)
+            d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.5);
+        }
+        convolver.buffer = reverbBuf;
+        const reverbGain = ctx.createGain();
+        reverbGain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gainNode.connect(convolver);
+        convolver.connect(reverbGain);
+        reverbGain.connect(ctx.destination);
+
+        let totalDuration = 0;
+        HAPPY_BDAY_NOTES.forEach(([note, oct, beats]) => {
+          totalDuration += beats * BEAT;
+        });
+
+        function scheduleLoop(startT) {
+          let cursor = startT;
+          HAPPY_BDAY_NOTES.forEach(([note, oct, beats]) => {
+            const freq = getNoteFreq(note, oct);
+            const dur = beats * BEAT;
+
+            const osc = ctx.createOscillator();
+            const env = ctx.createGain();
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(freq, cursor);
+            env.gain.setValueAtTime(0, cursor);
+            env.gain.linearRampToValueAtTime(0.6, cursor + 0.02);
+            env.gain.setValueAtTime(0.5, cursor + Math.min(0.1, dur * 0.5));
+            env.gain.exponentialRampToValueAtTime(0.001, cursor + dur * 0.92);
+            osc.connect(env);
+            env.connect(gainNode);
+            osc.start(cursor);
+            osc.stop(cursor + dur);
+
+            const osc2 = ctx.createOscillator();
+            const env2 = ctx.createGain();
+            osc2.type = "sine";
+            osc2.frequency.setValueAtTime(freq * 2, cursor);
+            env2.gain.setValueAtTime(0, cursor);
+            env2.gain.linearRampToValueAtTime(0.15, cursor + 0.02);
+            env2.gain.exponentialRampToValueAtTime(0.001, cursor + dur * 0.8);
+            osc2.connect(env2);
+            env2.connect(gainNode);
+            osc2.start(cursor);
+            osc2.stop(cursor + dur);
+            cursor += dur;
+          });
+          return cursor;
+        }
+
+        let nextLoopStart = scheduleLoop(t);
+        let stopped = false;
+        let loopTimer;
+
+        function scheduleNextIfNeeded() {
+          if (stopped || !loop) return;
+          const ahead = nextLoopStart - ctx.currentTime;
+          if (ahead < 1.0) {
+            nextLoopStart = scheduleLoop(nextLoopStart);
+          }
+          loopTimer = setTimeout(scheduleNextIfNeeded, 500);
+        }
+        if (loop) scheduleNextIfNeeded();
+
+        return function stop() {
+          stopped = true;
+          clearTimeout(loopTimer);
+          gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+        };
+      }
+
+      function startBirthdayMusic(delaySeconds = 0) {
+        if (musicPlaying) return;
+        try {
+          musicCtx = new (window.AudioContext || window.webkitAudioContext)();
+          musicStopFn = playHappyBirthday(musicCtx, true, delaySeconds);
+          musicPlaying = true;
+        } catch (e) {
+          console.log("Music init failed", e);
+        }
+      }
+
+      function pauseBirthdayMusic() {
+        if (!musicPlaying || !musicStopFn) return;
+        musicStopFn();
+        musicPlaying = false;
+        musicStopFn = null;
+      }
+
+      function resumeBirthdayMusic() {
+        startBirthdayMusic(0);
+      }
+
+      function tryUnlock() {
+        const name = document.getElementById("input-name").value;
+        const bday = document.getElementById("input-birthday").value;
+        const err = document.getElementById("error-msg");
+
+        const nameClear = normalize(name);
+        const bdayClear = bday.trim().replace(/\s/g, "");
+
+        const validNames = ["cappy", "cozma", "capitolina"];
+
+        const validDates = ["31-05-2008", "31/05/2008"];
+
+        const nameOk = validNames.some((n) => nameClear.includes(n));
+        const dateOk = validDates.includes(bdayClear);
+
+        if (!name.trim()) {
+          err.textContent = "🐾 Hey, what's your name?";
+          return;
+        }
+        if (!bday.trim()) {
+          err.textContent = "🎂 When's your birthday?";
+          return;
+        }
+        if (!nameOk) {
+          err.textContent =
+            "Hmm, that doesn't sound right... are you really Cappy? 🤔";
+          return;
+        }
+        if (!dateOk) {
+          err.textContent = "Birthday doesn't match... try DD/MM/YYYY format!";
+          return;
+        }
+
+        err.textContent = "";
+
+        startBirthdayMusic(2);
+
+        const loginCard = document.querySelector(".login-card");
+        loginCard.style.transition = "all 0.5s ease";
+        loginCard.style.transform = "scale(0.95) translateY(-20px)";
+        loginCard.style.opacity = "0";
+
+        setTimeout(() => {
+          document.getElementById("login-screen").classList.remove("active");
+          document.getElementById("main-screen").classList.add("active");
+          initMainScreen();
+        }, 500);
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") tryUnlock();
+      });
+
+      // === MAIN SCREEN INIT ===
+      function initMainScreen() {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const delay = entry.target.dataset.delay || 0;
+                setTimeout(
+                  () => entry.target.classList.add("visible"),
+                  parseInt(delay),
+                );
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.15 },
+        );
+
+        document
+          .querySelectorAll(".fade-observe, .timeline-item")
+          .forEach((el) => {
+            observer.observe(el);
+          });
+      }
+
+      // === MICROPHONE CAKE LOGIC ===
+      let audioContext;
+      let analyser;
+      let microphone;
+
+      async function startMic() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+
+          document.getElementById("dark-overlay").style.opacity = "0.9";
+          document
+            .getElementById("cake-container")
+            .classList.add("glow-effect");
+          document.getElementById("cake-section").style.background =
+            "transparent";
+          document.getElementById("cake-section").style.boxShadow = "none";
+          document.getElementById("cake-tag").style.opacity = "0";
+          document.getElementById("cake-title").style.color = "#fff";
+          document.getElementById("cake-title").style.textShadow =
+            "0 0 20px rgba(255,255,255,0.5)";
+          document.getElementById("cake-desc").style.opacity = "0";
+
+          pauseBirthdayMusic();
+
+          document
+            .querySelectorAll(".flame")
+            .forEach((f) => f.classList.add("active"));
+
+          document.getElementById("mic-btn").style.display = "none";
+          document.getElementById("blow-hint").style.display = "block";
+
+          audioContext = new (
+            window.AudioContext || window.webkitAudioContext
+          )();
+          analyser = audioContext.createAnalyser();
+          microphone = audioContext.createMediaStreamSource(stream);
+          microphone.connect(analyser);
+
+          analyser.fftSize = 256;
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+
+          function checkVolume() {
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+              sum += dataArray[i];
+            }
+            let average = sum / bufferLength;
+
+            if (average > 75) {
+              blowOutCandles(stream);
+              return;
+            }
+            requestAnimationFrame(checkVolume);
+          }
+          checkVolume();
+        } catch (err) {
+          alert(
+            "Oops! I need microphone access to let you blow out the candles! 🎙️🎂 (Make sure you aren't in a private tab and are on a secure connection)",
+          );
+          console.error(err);
+        }
+      }
+
+      function blowOutCandles(stream) {
+        document.querySelectorAll(".flame").forEach((f) => {
+          f.classList.remove("active");
+          f.classList.add("blown-out");
+        });
+
+        document
+          .getElementById("cake-container")
+          .classList.remove("glow-effect");
+        document.getElementById("blow-hint").style.opacity = "0";
+
+        stream.getTracks().forEach((track) => track.stop());
+
+        setTimeout(() => {
+          document.getElementById("dark-overlay").style.opacity = "0";
+          document.getElementById("cake-title").style.color =
+            "var(--capy-dark)";
+          document.getElementById("cake-title").style.textShadow = "none";
+          document.getElementById("cake-title").innerText =
+            "Happy 18th Birthday, Cappy!! 🎉";
+
+          resumeBirthdayMusic();
+          playConfettiSound();
+          launchConfetti();
+        }, 1200);
+      }
+
+      // === SOUND SYNTHESIS FOR CONFETTI POP ===
+      function playConfettiSound() {
+        const ctx =
+          audioContext ||
+          new (window.AudioContext || window.webkitAudioContext)();
+        const bufferSize = ctx.sampleRate * 0.3;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noiseSource = ctx.createBufferSource();
+        noiseSource.buffer = buffer;
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = "lowpass";
+        noiseFilter.frequency.value = 2000;
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.8, ctx.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(
+          0.01,
+          ctx.currentTime + 0.3,
+        );
+        noiseSource.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        noiseSource.start();
+
+        const frequencies = [523.25, 659.25, 783.99, 1046.5];
+        frequencies.forEach((freq, i) => {
+          setTimeout(() => {
+            const osc = ctx.createOscillator();
+            const oscGain = ctx.createGain();
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            oscGain.gain.setValueAtTime(0, ctx.currentTime);
+            oscGain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.05);
+            oscGain.gain.exponentialRampToValueAtTime(
+              0.01,
+              ctx.currentTime + 1.2,
+            );
+            osc.connect(oscGain);
+            oscGain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 1.2);
+          }, i * 80);
+        });
+      }
+
+      // === CONFETTI ===
+      function launchConfetti() {
+        const colors = [
+          "#D4837A",
+          "#C4956A",
+          "#6B8F5E",
+          "#C9A84C",
+          "#F2C4BE",
+          "#8B5E3C",
+          "#fff",
+        ];
+        const count = 250;
+        for (let i = 0; i < count; i++) {
+          const p = document.createElement("div");
+          p.className = "confetti-piece";
+          const size = 6 + Math.random() * 10;
+          p.style.cssText = `
+            left: ${Math.random() * 100}vw;
+            top: -20px;
+            width: ${size}px;
+            height: ${size}px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            border-radius: ${Math.random() > 0.5 ? "50%" : "3px"};
+            animation-duration: ${1.8 + Math.random() * 2.5}s;
+            animation-delay: ${Math.random() * 0.5}s;
+          `;
+          document.body.appendChild(p);
+          p.addEventListener("animationend", () => p.remove());
+        }
+      }
+    </script>
+  </body>
+</html>
